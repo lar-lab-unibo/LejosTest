@@ -12,7 +12,7 @@ import lejos.nxt.Motor;
 import lejos.nxt.Sound;
 import lejos.util.Matrix;
 
-public class BluetoothHelloWorld {
+public class BHelloWorld {
 
 	public static void main(String[] args) {
 		
@@ -36,6 +36,12 @@ public class BluetoothHelloWorld {
 			}
 		});
 		
+		/**
+		 * Wait for connection and start
+		 */
+		LCD.drawString("Waiting...", 0, 0);
+		bnode.waitAndStart();
+		LCD.clear();
 		
 		
 		/**
