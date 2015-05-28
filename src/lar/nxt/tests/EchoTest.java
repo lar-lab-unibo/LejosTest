@@ -10,10 +10,12 @@ import lar.nxt.protocols.sbun.SbunCommand.CommandName;
 import lar.nxt.protocols.sbun.SbunCommand.SbunTarget2D;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
+import lejos.nxt.Motor;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTMotor;
 import lejos.nxt.Sound;
 import lejos.nxt.TachoMotorPort;
+import lejos.util.Matrix;
 
 public class EchoTest {
 
@@ -26,6 +28,8 @@ public class EchoTest {
 		
 		NXTMotor m_left = new NXTMotor(MotorPort.A);
 		NXTMotor m_right = new NXTMotor(MotorPort.C);
+		
+		
 		
 		/**
 		 * CREATES INLINE BLUETOOTHNODE LISTENER
@@ -50,29 +54,64 @@ public class EchoTest {
 					SbunTarget2D target = table.get("/lar_marker_200");
 					
 					
-					double target_angle = target.angle * 180 / Math.PI;
-					double robot_angle = robot.angle * 180 / Math.PI;
-					if (robot_angle<0) robot_angle=360+robot_angle;
-					if (target_angle<0) target_angle=360+target_angle;
 					
-					//target_angle = target_angle % 360;
-					//robot_angle = robot_angle % 360;
-					double delta_angle = robot_angle-target_angle;
-					double dd = delta_angle;// Math.sin(delta_angle);
-					float k =0.8f;
 					
-					int l_power = (int)(dd*k);
-					int r_power = -(int)(dd*k);
+					double r = 0.028;
+					double L = 0.05;
+					double d = 0.115;
+					Matrix D = new Matrix(2,2);
+					D.set(0, 0, r/2);
+					D.set(0, 1, r/2);
+					D.set(1, 0, r/d);
+					D.set(1, 1, -r/d);
+					
+					Matrix C = new Matrix(2,2);
+					C.set(0,0, Math.cos(robot.angle));
+					C.set(0,1, -L*Math.sin(robot.angle));
+					C.set(1,0, Math.sin(robot.angle));
+					C.set(1,1, L*Math.cos(robot.angle));
+					
+					Matrix A = C.times(D);
+					
+					double K = 10;
+					double x_dot=-K*(robot.x-target.x);
+					double y_dot=-K*(robot.y-target.y);
 					
 					LCD.clear();
-					LCD.drawString("q_goal:"+target_angle, 0, 0);
-					LCD.drawString("q_robot:"+robot_angle, 0, 1);
-					LCD.drawString("diff:"+delta_angle, 0, 3);
+					LCD.drawString("X:"+-x_dot, 0, 0);
+					LCD.drawString("Y:"+-y_dot, 0, 1);
+					Matrix P_dot = new Matrix(2,1);
+					P_dot.set(0, 0, x_dot );
+					P_dot.set(1, 0, y_dot );
+					
+					Matrix omegas = A.inverse().times(P_dot);
 					
 					
+					double VK = 1;
 					
-					m_left.setPower(l_power);
-					m_right.setPower(r_power);
+					int w_r = (int)(VK*omegas.get(0, 0));
+					int w_l = (int)(VK*omegas.get(1, 0));
+					
+					
+					Motor.A.setSpeed(Math.abs(w_l));
+					Motor.C.setSpeed(Math.abs(w_r));//(int)(VK*omegas.get(1, 0)));
+					
+					
+					if(w_l>=0){
+						Motor.A.forward();
+					}else{
+						Motor.A.backward();
+					}
+					
+					if(w_r>=0){
+						Motor.C.forward();
+					}else{
+						Motor.C.backward();
+					}
+					
+					
+					m_left.setPower(w_l);
+					m_right.setPower(w_r);
 					//System.out.println(str);
 					
 					
