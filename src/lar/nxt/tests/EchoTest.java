@@ -46,6 +46,8 @@ public class EchoTest {
 				}
 				if(command.name.equals(CommandName.POSES)){
 					
+					//LCD.clear();
+					
 					//Inserisce nell'hashtable tutti i vettori Q
 					Hashtable<String , SbunTarget2D> table = (Hashtable<String , SbunTarget2D>)command.payload;
 					
@@ -53,9 +55,9 @@ public class EchoTest {
 					SbunTarget2D robot = table.get("/lar_marker_202");
 					SbunTarget2D target = table.get("/lar_marker_200");
 					
-					
-					
-					
+					SbunTarget2D time = table.get("time");
+					LCD.drawString("time:"+time.x, 0, 5);
+					/*
 					double r = 0.028;
 					double L = 0.05;
 					double d = 0.115;
@@ -77,9 +79,9 @@ public class EchoTest {
 					double x_dot=-K*(robot.x-target.x);
 					double y_dot=-K*(robot.y-target.y);
 					
-					LCD.clear();
-					LCD.drawString("X:"+-x_dot, 0, 0);
-					LCD.drawString("Y:"+-y_dot, 0, 1);
+					
+					//LCD.drawString("X:"+-x_dot, 0, 0);
+					//LCD.drawString("Y:"+-y_dot, 0, 1);
 					Matrix P_dot = new Matrix(2,1);
 					P_dot.set(0, 0, x_dot );
 					P_dot.set(1, 0, y_dot );
@@ -108,12 +110,9 @@ public class EchoTest {
 					}else{
 						Motor.C.backward();
 					}
+					*/
 					
-					
-					m_left.setPower(w_l);
-					m_right.setPower(w_r);
-					//System.out.println(str);
-					
+				
 					
 					//m.setPower((int)ta.angle);
 					
