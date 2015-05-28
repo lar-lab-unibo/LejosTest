@@ -29,7 +29,7 @@ public class EchoTest {
 		NXTMotor m_left = new NXTMotor(MotorPort.A);
 		NXTMotor m_right = new NXTMotor(MotorPort.C);
 		
-		
+		 
 		
 		/**
 		 * CREATES INLINE BLUETOOTHNODE LISTENER
