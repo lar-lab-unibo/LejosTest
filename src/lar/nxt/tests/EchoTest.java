@@ -20,59 +20,78 @@ import lejos.util.Matrix;
 public class EchoTest {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		/**
 		 * Bluetooth Node Creation
 		 */
 		BluetoothSlaveNode bnode = new BluetoothSlaveNode();
-		
+
 		NXTMotor m_left = new NXTMotor(MotorPort.A);
 		NXTMotor m_right = new NXTMotor(MotorPort.C);
-		
-		
-		
+
+		boolean line_following = true;
+		boolean obstacle_avoidance = false;
+
 		/**
 		 * CREATES INLINE BLUETOOTHNODE LISTENER
 		 */
 		bnode.addListener(new BluetoothSlaveNode.BluetoothSlaveNodeListener() {
-			
+
 			@Override
 			public void consumeCommand(String str) {
-				
+
 				SbunCommand command = SbunCommand.parseCommandString(str);
-				
+
 				if(command.name.equals(CommandName.POSES)){
-					
+
 					//Inserisce nell'hashtable tutti i vettori Q
 					Hashtable<String , SbunTarget2D> table = (Hashtable<String , SbunTarget2D>)command.payload;
-					
+
 					//Prende i vettori q in base al nome
 					SbunTarget2D robot = table.get("/lar_marker_202");
 					SbunTarget2D target = table.get("/lar_marker_200");
-					
-					
-					
+
+					if(robot.x < 0){
+						line_following = true;
+						obstacle_avoidance = false;
+					}else{
+						line_following = false;
+						obstacle_avoidance = true;
+					}
+
+
 				}
-				
+
 			}
 		});
-		
+
+
 		/**
 		 * Wait for connection and start
 		 */
 		LCD.drawString("Waiting...", 0, 0);
 		bnode.waitAndStart();
 		LCD.clear();
-		
+
+
+		while(line_following){
+			//LINE FOLLOWING
+		}
+
+		while(obstacle_avoidance){
+			//OBSTACLE AVOIDANCE
+		}
+
+
 		/**
 		 * Wait for ESC Button press
 		 */
 		LCD.drawString("Press exit", 0, 0);
 		while(Button.waitForAnyPress()!=Button.ID_ESCAPE){
-			
+
 		}
-		
-		
+
+
 		bnode.forceClose();
 	}
 }
