@@ -19,6 +19,10 @@ import lejos.util.Matrix;
 
 public class EchoTest {
 
+  //TASKS FLAGS
+	static boolean line_following = true;
+	static boolean obstacle_avoidance = false;
+
 	public static void main(String[] args) throws Exception {
 
 		/**
@@ -29,8 +33,7 @@ public class EchoTest {
 		NXTMotor m_left = new NXTMotor(MotorPort.A);
 		NXTMotor m_right = new NXTMotor(MotorPort.C);
 
-		boolean line_following = true;
-		boolean obstacle_avoidance = false;
+
 
 		/**
 		 * CREATES INLINE BLUETOOTHNODE LISTENER
